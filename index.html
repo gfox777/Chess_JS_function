@@ -12,6 +12,9 @@
   var move_figure;
   var to_figure;
   var possible_moves;
+  var save_pawn_figure = " ";
+  var save_pawn_x = -1;
+  var save_pawn_y = -1;
 
   start();
 
@@ -394,11 +397,13 @@
     to_figure = map[dx][dy];
     map[dx][dy] = from_figure;
     map[sx][sy] = " ";
+    move_pawn_attack(from_figure, dx, dy);
   }
 
   function back_figure(sx, sy, dx, dy) {
     map[sx][sy] = from_figure;
     map[dx][dy] = to_figure;
+    back_pawn_attack(from_figure, dx, dy);
   }
 
   // узнаем координаты, куда переместить фигуру
@@ -411,16 +416,26 @@
     mark_moves_from();
     show_map();
   }
+  function back_pawn_attack() {
+    if (save_pawn_x == -1) return;
+    map[save_pawn_x][save_pawn_y] = save_pawn_figure;
+  }
 
-  function check_pawn_attack(from_figure, to_x, to_y) {
+  function move_pawn_attack(from_figure, to_x, to_y) {
     if (is_pawn(from_figure))
       if (to_x == pawn_attack_x && to_y == pawn_attack_y) {
-        if (move_color == "white") map[to_x][to_y - 1] = " ";
-        else map[to_x][to_y + 1] = " ";
+        var y = move_color == "white" ? to_y - 1 : to_y + 1;
+        save_pawn_figure = map[to_x][y];
+        save_pawn_x = to_x;
+        save_pawn_y = y;
+        map[to_x][y] = " ";
       }
+  }
 
+  function check_pawn_attack(from_figure, to_x, to_y) {
     pawn_attack_x = -1;
     pawn_attack_y = -1;
+    save_pawn_x = -1;
     if (is_pawn(from_figure))
       if (Math.abs(to_y - move_from_y)) {
         pawn_attack_x = move_from_x;
