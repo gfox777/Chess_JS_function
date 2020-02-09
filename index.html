@@ -15,6 +15,10 @@
   var save_pawn_figure = " ";
   var save_pawn_x = -1;
   var save_pawn_y = -1;
+  var can_white_castel_left = true;
+  var can_white_castel_right = true;
+  var can_black_castel_left = true;
+  var can_black_castel_right = true;
 
   start();
 
@@ -302,16 +306,20 @@
   }
   // инициализация доски
   function init_map() {
+    var can_white_castel_left = true;
+    var can_white_castel_right = true;
+    var can_black_castel_left = true;
+    var can_black_castel_right = true;
     map = [
       //y0  y1  y2  y3  y4  y5  y6  y7
-      ["R", "p", " ", " ", " ", " ", "P", "r"], //x0
-      ["N", "P", " ", " ", " ", " ", "p", "n"], //x1
-      ["B", "P", " ", " ", " ", " ", "p", "b"], //x2
-      ["Q", "P", " ", " ", " ", " ", "p", "q"], //x3
+      ["R", " ", " ", " ", " ", " ", " ", "r"], //x0
+      [" ", "P", " ", " ", " ", " ", " ", " "], //x1
+      [" ", " ", " ", " ", " ", " ", " ", " "], //x2
+      [" ", "P", " ", " ", " ", " ", "p", " "], //x3
       ["K", "P", " ", " ", " ", " ", "p", "k"], //x4
-      ["B", "P", " ", " ", " ", " ", "p", "b"], //x5
-      ["N", "P", " ", " ", " ", " ", "p", "n"], //x6
-      ["R", "P", " ", " ", " ", " ", "p", "r"] //x7
+      [" ", " ", " ", " ", " ", " ", "p", " "], //x5
+      [" ", " ", " ", " ", " ", " ", " ", " "], //x6
+      ["R", "P", " ", " ", " ", " ", " ", "r"] //x7
     ];
   }
   // отрисовка доски с фигурами
@@ -406,12 +414,33 @@
     back_pawn_attack(from_figure, dx, dy);
   }
 
+  function update_castle_flags(from_x, from_y, to_x, to_y) {
+    var figure = map[to_x][to_y];
+    if (figure == "K") {
+      can_white_castel_left = false;
+      can_white_castel_right = false;
+    }
+    if (figure == "k") {
+      can_black_castel_left = false;
+      can_black_castel_right = false;
+    }
+    if (figure == "R" && from_x == 0 && from_y == 0)
+      can_white_castel_left = false;
+    if (figure == "R" && from_x == 7 && from_y == 0)
+      can_white_castel_right = false;
+    if (figure == "r" && from_x == 0 && from_y == 7)
+      can_black_castel_left = false;
+    if (figure == "r" && from_x == 7 && from_y == 7)
+      can_black_castel_right = false;
+  }
   // узнаем координаты, куда переместить фигуру
   function click_box_to(to_x, to_y) {
     move_figure(move_from_x, move_from_y, to_x, to_y);
     promote_pown(from_figure, to_x, to_y);
 
     check_pawn_attack(from_figure, to_x, to_y);
+    update_castle_flags(move_from_x, move_from_y, to_x, to_y);
+
     turn_move();
     mark_moves_from();
     show_map();
