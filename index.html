@@ -1,6 +1,6 @@
 <div id="board"></div>
 <div id="info"></div>
-
+<input type="button" onclick="doRandMove()" />
 <script type="text/javascript">
   var map = Array();
   var inf = Array();
@@ -29,6 +29,25 @@
     show_map();
   }
 
+  function doRandMove() {
+    var ones = 0;
+    for (var x = 0; x <= 7; x++)
+      for (var y = 0; y <= 7; y++) if (inf[x][y] == "1") ones++;
+    if (ones == 0) return;
+    var nr = Math.floor(Math.random() * ones);
+    for (var x = 0; x <= 7; x++)
+      for (var y = 0; y <= 7; y++)
+        if (inf[x][y] == "1") if (nr-- == 0) click_box_from(x, y);
+
+    var twos = 0;
+    for (var x = 0; x <= 7; x++)
+      for (var y = 0; y <= 7; y++) if (inf[x][y] == "2") twos++;
+    if (twos == 0) return;
+    var nr1 = Math.floor(Math.random() * twos);
+    for (var x = 0; x <= 7; x++)
+      for (var y = 0; y <= 7; y++)
+        if (inf[x][y] == "2") if (nr1-- == 0) click_box_to(x, y);
+  }
   // проверка откуда и куда можно пойти
   function can_move(sx, sy, dx, dy) {
     if (!can_move_from(sx, sy)) return false;
